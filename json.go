@@ -9,6 +9,7 @@ import (
 
 type (
 	messageJson struct {
+		Message
 		Data          interface{}
 		ErrorCode     int
 		ErrorMessages []string
