@@ -62,5 +62,7 @@ func (m *messageJson) SetError(code int, message string) {
 		m.ErrorCode = code
 	}
 
-	m.ErrorMessages = append(m.ErrorMessages, message)
+	if message != "" {
+		m.ErrorMessages = append(m.ErrorMessages, message)
+	}
 }
