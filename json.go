@@ -8,8 +8,13 @@ import (
 )
 
 type (
-	messageJson struct {
+	MessageJson interface {
 		Message
+		Error(code int, message string) *messageJson
+		SetError(code int, message string)
+	}
+
+	messageJson struct {
 		Data          interface{}
 		ErrorCode     int
 		ErrorMessages []string
@@ -22,7 +27,7 @@ type (
 )
 
 var _ json.Marshaler = &messageJson{}
-var _ Message = &messageJson{}
+var _ MessageJson = &messageJson{}
 
 func NewJson() *messageJson {
 	return &messageJson{
@@ -37,7 +42,7 @@ func (m *messageJson) cloneErr() *messageJson {
 	}
 
 	var el string
-	for _, el = range c.ErrorMessages {
+	for _, el = range m.ErrorMessages {
 		c.ErrorMessages = append(c.ErrorMessages, el)
 	}
 
@@ -70,15 +75,19 @@ func (m *messageJson) Return(c echo.Context) error {
 	return c.JSON(m.ErrorCode, m)
 }
 
-func (m *messageJson) Error(code int, message string) Message {
+func (m *messageJson) Error(code int, message string) *messageJson {
 	var c = m.cloneErr()
-	if c.ErrorCode == 0 ||
-		c.ErrorCode == http.StatusOK ||
-		c.ErrorCode < http.StatusInternalServerError && code >= http.StatusInternalServerError {
-		c.ErrorCode = code
+
+	c.SetError(code, message)
+	return c
+}
+
+func (m *messageJson) SetError(code int, message string) {
+	if m.ErrorCode == 0 ||
+		m.ErrorCode == http.StatusOK ||
+		m.ErrorCode < http.StatusInternalServerError && code >= http.StatusInternalServerError {
+		m.ErrorCode = code
 	}
 
-	c.ErrorMessages = append(c.ErrorMessages, message)
-
-	return c
+	m.ErrorMessages = append(m.ErrorMessages, message)
 }

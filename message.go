@@ -7,6 +7,5 @@ import (
 type (
 	Message interface {
 		Return(c echo.Context) error
-		Error(code int, message string) Message
 	}
 )
