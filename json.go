@@ -61,37 +61,32 @@ func (m *messageJson) Return(c echo.Context) error {
 	return c.JSON(m.ErrorCode, m)
 }
 
-// SetError set error message
-// Deprecated: use SetErrorMap instead
-func (m *messageJson) SetError(code int, message string) {
-	if m.ErrorCode == 0 ||
-		m.ErrorCode == http.StatusOK ||
-		m.ErrorCode < http.StatusInternalServerError && code >= http.StatusInternalServerError {
-		m.ErrorCode = code
-	}
-
-	if message != "" {
-		m.ErrorMessages = append(m.ErrorMessages, message)
-	}
-}
-
 // SetErrorMap set error with list and map
-func (m *messageJson) SetErrorMap(code int, message string, field string) {
+func (m *messageJson) SetError(options ...Option) {
+	var args = &Options{}
+
+	var opt Option
+	for _, opt = range options {
+		opt(args)
+	}
+
 	if m.ErrorCode == 0 ||
 		m.ErrorCode == http.StatusOK ||
-		m.ErrorCode < http.StatusInternalServerError && code >= http.StatusInternalServerError {
-		m.ErrorCode = code
+		m.ErrorCode < http.StatusInternalServerError && args.code >= http.StatusInternalServerError {
+		m.ErrorCode = args.code
 	}
 
-	if message != "" {
-		m.ErrorMessages = append(m.ErrorMessages, message)
-	}
-
-	if field != "" {
+	if args.field != "" && args.message != "" {
 		if m.ErrorMaps == nil {
 			m.ErrorMaps = make(map[string][]string)
 		}
 
-		m.ErrorMaps[field] = append(m.ErrorMaps[field], message)
+		m.ErrorMaps[args.field] = append(m.ErrorMaps[args.field], args.message)
+
+		return
+	}
+
+	if args.message != "" {
+		m.ErrorMessages = append(m.ErrorMessages, args.message)
 	}
 }
