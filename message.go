@@ -7,6 +7,8 @@ import (
 type (
 	Message interface {
 		Return(c echo.Context) error
+
+		// Deprecated: use SetErrorMap instead
 		SetError(code int, message string)
 		SetErrorMap(code int, message string, field string)
 	}

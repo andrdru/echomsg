@@ -62,7 +62,7 @@ func (m *messageJson) Return(c echo.Context) error {
 }
 
 // SetError set error message
-// deprecated use SetErrorMap instead
+// Deprecated: use SetErrorMap instead
 func (m *messageJson) SetError(code int, message string) {
 	if m.ErrorCode == 0 ||
 		m.ErrorCode == http.StatusOK ||
