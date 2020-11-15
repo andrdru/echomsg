@@ -8,5 +8,6 @@ type (
 	Message interface {
 		Return(c echo.Context) error
 		SetError(code int, message string)
+		SetErrorMap(code int, message string, field string)
 	}
 )
