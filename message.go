@@ -8,5 +8,6 @@ type (
 	Message interface {
 		Return(c echo.Context) error
 		SetError(options ...Option)
+		Raw() interface{}
 	}
 )

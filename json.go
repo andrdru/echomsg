@@ -90,3 +90,7 @@ func (m *messageJson) SetError(options ...Option) {
 		m.ErrorMessages = append(m.ErrorMessages, args.message)
 	}
 }
+
+func (m *messageJson) Raw() interface{} {
+	return m
+}
