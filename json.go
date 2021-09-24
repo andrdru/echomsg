@@ -3,6 +3,7 @@ package echomsg
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -61,7 +62,7 @@ func (m *messageJson) Return(c echo.Context) error {
 	return c.JSON(m.ErrorCode, m)
 }
 
-// SetErrorMap set error with list and map
+// SetError set error with list and map
 func (m *messageJson) SetError(options ...Option) {
 	var args = &Options{}
 
@@ -76,18 +77,18 @@ func (m *messageJson) SetError(options ...Option) {
 		m.ErrorCode = args.code
 	}
 
+	if args.field == "" && args.message == "" {
+		return
+	}
+
+	m.ErrorMessages = append(m.ErrorMessages, strings.Join([]string{args.field, args.message}, ": "))
+
 	if args.field != "" && args.message != "" {
 		if m.ErrorMaps == nil {
 			m.ErrorMaps = make(map[string][]string)
 		}
 
 		m.ErrorMaps[args.field] = append(m.ErrorMaps[args.field], args.message)
-
-		return
-	}
-
-	if args.message != "" {
-		m.ErrorMessages = append(m.ErrorMessages, args.message)
 	}
 }
 
