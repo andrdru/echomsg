@@ -81,9 +81,17 @@ func (m *messageJson) SetError(options ...Option) {
 		return
 	}
 
-	m.ErrorMessages = append(m.ErrorMessages, strings.Join([]string{args.field, args.message}, ": "))
+	var parts = make([]string, 0, 2)
+	if args.field != "" {
+		parts = append(parts, args.field)
+	}
+	if args.message != "" {
+		parts = append(parts, args.message)
+	}
 
-	if args.field != "" && args.message != "" {
+	m.ErrorMessages = append(m.ErrorMessages, strings.Join(parts, ": "))
+
+	if len(parts) == 2 {
 		if m.ErrorMaps == nil {
 			m.ErrorMaps = make(map[string][]string)
 		}
